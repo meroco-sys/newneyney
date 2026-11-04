@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ribbon Closet 風コーデWebアプリ</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #e6e6fa 50%, #f0f8ff 100%);
+      --pink-main: #ff9ebb;
+      --purple-main: #b39ddb;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border-color: #f8bbd0;
+      --text-color: #5d4037;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* スマホ画面風コンテナ */
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255, 255, 255, 0.5);
+      border-left: 1px solid #eee;
+      border-right: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-bottom: 70px;
+    }
+
+    /* ヘッダー */
+    .header {
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 20px;
+      color: #9c27b0;
+      letter-spacing: 1px;
+    }
+    .header p {
+      font-size: 12px;
+      color: #ba68c8;
+      margin-top: 4px;
+    }
+
+    /* メインコンテンツエリア */
+    .content {
+      padding: 16px;
+      flex: 1;
+    }
+
+    .tab-page {
+      display: none;
+    }
+    .tab-page.active {
+      display: block;
+    }
+
+    /* カード風グリッドメニュー */
+    .grid-menu {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .menu-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px 10px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .menu-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--pink-main);
+    }
+    .menu-card .icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .menu-card .title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #4a148c;
+    }
+
+    /* コーデ編集画面 */
+    .coord-editor {
+      background: var(--card-bg);
+      border: 2px dashed var(--purple-main);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .coord-slots {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .slot {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .qr-side {
+      width: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .qr-box {
+      background: #fff;
+      border: 1px solid #f8bbd0;
+      border-radius: 10px;
+      height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    /* 登録画面のスタイル */
+    .register-box {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px;
+      border: 2px solid var(--border-color);
+    }
+    .register-box input[type="file"] {
+      margin-top: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    /* 下部ナビゲーションバー */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 430px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      color: #888;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .nav-item.active {
+      color: #ab47bc;
+      font-weight: bold;
+    }
+    .nav-item .icon {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1>ときめきを、コーデしよう！</h1>
+    <p>あつめて ♡ ならべて ♡ お気に入り</p>
+  </header>
+
+  <!-- メイン表示域 -->
+  <main class="content">
+    <!-- ホームタブ -->
+    <section id="page-home" class="tab-page active">
+      <div class="grid-menu">
+        <div class="menu-card" onclick="switchTab('coord')">
+          <div class="icon">👗</div>
+          <div class="title">コーディネートを始める</div>
+        </div>
+        <div class="menu-card" onclick="switchTab('register')">
+          <div class="icon">➕</div>
+          <div class="title">コーデを登録</div>
+        </div>
+        <div class="menu-card" onclick="alert('準備中だよ♡')">
+          <div class="icon">♡</div>
+          <div class="title">ほしいコーデ</div>
+        </div>
+        <div class="menu-card" onclick="alert('準備中だよ♡')">
+          <div class="icon">☆</div>
+          <div class="title">ベストコーデ一覧</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- コーデ編集/閲覧タブ -->
+    <section id="page-coord" class="tab-page">
+      <div style="margin-bottom: 12px; display: flex; gap: 8px;">
+        <button style="padding: 6px 12px; border-radius: 20px; border: 1px solid #ab47bc; background:#fff; color:#ab47bc; font-size:11px;">2コーデ比較</button>
+        <button style="padding: 6px 12px; border-radius: 20px; border: none; background: #ab47bc; color:#fff; font-size:11px;">☆ ベストに登録</button>
+      </div>
+
+      <div class="coord-editor">
+        <!-- コーデ部位スロット（保存された画像が表示されます） -->
+        <div class="coord-slots">
+          <div class="slot" id="slot-acc">アクセ</div>
+          <div class="slot" id="slot-top">トップス</div>
+          <div class="slot" id="slot-bottom">ボトムス</div>
+          <div class="slot" id="slot-shoes">シューズ</div>
+        </div>
+
+        <!-- QRコードエリア -->
+        <div class="qr-side">
+          <div class="qr-box">T-QR</div>
+          <div class="qr-box">B-QR</div>
+          <div class="qr-box">S-QR</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 登録用タブ -->
+    <section id="page-register" class="tab-page">
+      <div class="register-box">
+        <h3 style="font-size: 14px; color: #9c27b0; margin-bottom: 8px;">トップス画像を登録・保存</h3>
+        <input type="file" id="imageInput" accept="image/*">
+        <div style="font-size: 11px; color: #666;">※選択した画像は自動でスマホ/ブラウザに保存され、ページを閉じても消えません。</div>
+        <button onclick="deleteImage()" style="margin-top: 10px; background: #ff5252; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor:pointer;">保存された画像を削除</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ナビゲーションバー -->
+  <nav class="nav-bar">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <span class="icon">🏠</span>
+      ホーム
+    </button>
+    <button class="nav-item" id="nav-coord" onclick="switchTab('coord')">
+      <span class="icon">👗</span>
+      コーデ
+    </button>
+    <button class="nav-item" id="nav-register" onclick="switchTab('register')">
+      <span class="icon">➕</span>
+      登録
+    </button>
+  </nav>
+</div>
+
+<script>
+  // タブ切り替え関数
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+    const targetPage = document.getElementById('page--' + tabName) || document.getElementById('page-' + tabName);
+    if (targetPage) targetPage.classList.add('active');
+
+    const targetNav = document.getElementById('nav-' + tabName);
+    if (targetNav) targetNav.classList.add('active');
+  }
+
+  // 画像の保存・読み込み処理
+  const imageInput = document.getElementById('imageInput');
+  const slotTop = document.getElementById('slot-top');
+
+  // ページ読み込み時に保存されていた画像を復元
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedImage = localStorage.getItem('saved_top_image');
+    if (savedImage) {
+      displayTopImage(savedImage);
+    }
+  });
+
+  // ファイルが選択されたとき
+  imageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64Data = e.target.result;
+      displayTopImage(base64Data);
+
+      try {
+        localStorage.setItem('saved_top_image', base64Data);
+        alert('トップス画像を保存しました！「コーデ」タブから確認できます。');
+      } catch (err) {
+        alert('画像の容量が大きすぎるため保存できませんでした。');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // トップススロットに画像を表示する関数
+  function displayTopImage(src) {
+    slotTop.innerHTML = `<img src="${src}" alt="トップス">`;
+  }
+
+  // 保存した画像を削除する関数
+  function deleteImage() {
+    localStorage.removeItem('saved_top_image');
+    slotTop.innerHTML = 'トップス';
+    imageInput.value = '';
+    alert('画像を削除しました。');
+  }
+</script>
+
+</body>
+</html>
