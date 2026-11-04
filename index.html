@@ -216,19 +216,19 @@
       color: #4a148c;
     }
 
-    /* 4コーデ比較エリア */
+    /* 4コーデ比較エリア（QRなし全身縦並び×4列） */
     .compare-container {
       display: none;
       margin-top: 10px;
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 12px;
+      padding: 10px;
       border: 2px solid var(--purple-main);
     }
     .compare-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      gap: 4px;
     }
     .compare-column {
       background: #fff;
@@ -239,18 +239,19 @@
       flex-direction: column;
       gap: 4px;
       align-items: center;
-      font-size: 9px;
+      font-size: 8px;
     }
     .compare-slot {
       width: 100%;
-      height: 40px;
+      height: 42px;
       background: #fafafa;
       border: 1px dashed #ccc;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      font-size: 8px;
+      font-size: 7px;
       color: #999;
     }
     .compare-slot img {
@@ -321,9 +322,9 @@
         <button class="btn btn-fill">☆ ベストに登録</button>
       </div>
 
-      <!-- 最大4コーデ比較エリア -->
+      <!-- 最大4コーデ比較エリア（QRなし全身4パーツ縦並び） -->
       <div id="compare-section" class="compare-container">
-        <h4 style="font-size: 12px; color: #9c27b0; margin-bottom: 6px; text-align: center;">最大4つまで比較</h4>
+        <h4 style="font-size: 11px; color: #9c27b0; margin-bottom: 6px; text-align: center;">4コーデ比較（全身）</h4>
         <div class="compare-grid" id="compare-grid-slots"></div>
       </div>
 
@@ -495,6 +496,7 @@
     renderSavedList();
   }
 
+  // 4コーデ比較表示（QRなし、アクセ〜シューズの全身縦並び×4列）
   function toggleCompareView() {
     const section = document.getElementById('compare-section');
     const isVisible = section.style.display === 'block';
@@ -513,8 +515,10 @@
       grid.innerHTML = targets.map((item) => `
         <div class="compare-column">
           <span style="font-weight:bold; color:#4a148c; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${item.name}</span>
+          <div class="compare-slot">${item.data.acc ? `<img src="${item.data.acc}">` : 'アクセ'}</div>
           <div class="compare-slot">${item.data.top ? `<img src="${item.data.top}">` : 'トップ'}</div>
           <div class="compare-slot">${item.data.bottom ? `<img src="${item.data.bottom}">` : 'ボトム'}</div>
+          <div class="compare-slot">${item.data.shoes ? `<img src="${item.data.shoes}">` : 'シューズ'}</div>
         </div>
       `).join('');
     }
