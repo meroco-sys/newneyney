@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ribbon Closet 風コーデWebアプリ</title>
+  <title>Ribbon Closet</title>
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #e6e6fa 50%, #f0f8ff 100%);
@@ -41,23 +41,8 @@
       padding-bottom: 80px;
     }
 
-    .header {
-      padding: 20px 10px 10px;
-      text-align: center;
-    }
-    .header h1 {
-      font-size: 20px;
-      color: #9c27b0;
-      letter-spacing: 1px;
-    }
-    .header p {
-      font-size: 12px;
-      color: #ba68c8;
-      margin-top: 4px;
-    }
-
     .content {
-      padding: 12px;
+      padding: 16px;
       flex: 1;
     }
 
@@ -68,28 +53,33 @@
       display: block;
     }
 
-    /* ホーム画面 */
-    .grid-menu {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 10px;
+    /* ホーム画面（3つのメニュー） */
+    .grid-menu-3 {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 20px;
     }
-    .menu-card {
+    .menu-card-large {
       background: var(--card-bg);
       border: 2px solid var(--border-color);
       border-radius: 16px;
-      padding: 20px 10px;
+      padding: 22px;
       text-align: center;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      transition: transform 0.2s;
     }
-    .menu-card .icon {
-      font-size: 24px;
-      margin-bottom: 8px;
+    .menu-card-large:hover {
+      transform: translateY(-2px);
+      border-color: var(--pink-main);
     }
-    .menu-card .title {
-      font-size: 14px;
+    .menu-card-large .icon {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+    .menu-card-large .title {
+      font-size: 16px;
       font-weight: bold;
       color: #4a148c;
     }
@@ -113,12 +103,12 @@
       background: #fff;
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      height: 80px;
+      height: 75px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #aaa;
-      font-size: 12px;
+      font-size: 11px;
       overflow: hidden;
       position: relative;
     }
@@ -129,7 +119,7 @@
     }
 
     .qr-side {
-      width: 85px;
+      width: 80px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -138,11 +128,11 @@
       background: #fff;
       border: 1px solid #f8bbd0;
       border-radius: 10px;
-      height: 80px;
+      height: 75px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 9px;
       color: #aaa;
       overflow: hidden;
     }
@@ -177,6 +167,7 @@
       border-radius: 12px;
       font-weight: bold;
       margin-top: 10px;
+      font-size: 12px;
     }
 
     /* 登録フォーム */
@@ -187,25 +178,25 @@
       border: 2px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
     .form-group label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       color: #6a1b9a;
     }
     .form-group input[type="file"] {
-      font-size: 11px;
+      font-size: 10px;
     }
 
     /* 保存済みコーデリスト */
     .saved-list {
-      margin-top: 16px;
+      margin-top: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -223,6 +214,49 @@
       font-size: 13px;
       font-weight: bold;
       color: #4a148c;
+    }
+
+    /* 4コーデ比較エリア */
+    .compare-container {
+      display: none;
+      margin-top: 10px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 12px;
+      border: 2px solid var(--purple-main);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .compare-column {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      font-size: 9px;
+    }
+    .compare-slot {
+      width: 100%;
+      height: 40px;
+      background: #fafafa;
+      border: 1px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 8px;
+      color: #999;
+    }
+    .compare-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     /* ナビゲーションバー */
@@ -261,30 +295,21 @@
 <body>
 
 <div class="app-container">
-  <header class="header">
-    <h1>ときめきを、コーデしよう！</h1>
-    <p>あつめて ♡ ならべて ♡ お気に入り</p>
-  </header>
-
   <main class="content">
-    <!-- ホームタブ -->
+    <!-- ホームタブ（3つのメニュー） -->
     <section id="page-home" class="tab-page active">
-      <div class="grid-menu">
-        <div class="menu-card" onclick="switchTab('coord')">
+      <div class="grid-menu-3">
+        <div class="menu-card-large" onclick="switchTab('coord')">
           <div class="icon">👗</div>
-          <div class="title">コーディネートを始める</div>
+          <div class="title">ミックスコーデ</div>
         </div>
-        <div class="menu-card" onclick="switchTab('register')">
+        <div class="menu-card-large" onclick="switchTab('register')">
           <div class="icon">➕</div>
-          <div class="title">パーツ／QRを登録</div>
+          <div class="title">コーデ登録</div>
         </div>
-        <div class="menu-card" onclick="switchTab('saved')">
+        <div class="menu-card-large" onclick="switchTab('saved')">
           <div class="icon">☆</div>
           <div class="title">保存したコーデ</div>
-        </div>
-        <div class="menu-card" onclick="alert('準備中だよ♡')">
-          <div class="icon">♡</div>
-          <div class="title">ほしいコーデ</div>
         </div>
       </div>
     </section>
@@ -292,8 +317,16 @@
     <!-- コーデ編集/閲覧タブ -->
     <section id="page-coord" class="tab-page">
       <div style="margin-bottom: 10px; display: flex; gap: 8px;">
-        <button class="btn btn-outline">2コーデ比較</button>
+        <button class="btn btn-outline" onclick="toggleCompareView()">4コーデ比較</button>
         <button class="btn btn-fill">☆ ベストに登録</button>
+      </div>
+
+      <!-- 最大4コーデ比較エリア -->
+      <div id="compare-section" class="compare-container">
+        <h4 style="font-size: 12px; color: #9c27b0; margin-bottom: 6px; text-align: center;">最大4つまで比較</h4>
+        <div class="compare-grid" id="compare-grid-slots">
+          <!-- JavaScriptで生成 -->
+        </div>
       </div>
 
       <!-- コーデプレビュー -->
@@ -305,6 +338,7 @@
           <div class="slot" id="slot-shoes">シューズ</div>
         </div>
         <div class="qr-side">
+          <div class="qr-box" id="slot-qr-acc">A-QR</div>
           <div class="qr-box" id="slot-qr-t">T-QR</div>
           <div class="qr-box" id="slot-qr-b">B-QR</div>
           <div class="qr-box" id="slot-qr-s">S-QR</div>
@@ -313,7 +347,7 @@
 
       <!-- コーデ保存用フォーム -->
       <div style="margin-top: 12px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 12px;">
-        <input type="text" id="coord-name-input" placeholder="コーデ名を入力（例：ゴスロリスタイル）" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 12px;">
+        <input type="text" id="coord-name-input" placeholder="コーデ名を入力" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 12px;">
         <button class="btn btn-save" onclick="saveCurrentCoord()">★ このコーデを名前をつけて保存</button>
       </div>
     </section>
@@ -321,98 +355,51 @@
     <!-- 画像・QR登録タブ -->
     <section id="page-register" class="tab-page">
       <div class="register-form">
-        <h3 style="font-size: 14px; color: #9c27b0;">現在のコーデに画像を追加</h3>
+        <h3 style="font-size: 13px; color: #9c27b0;">パーツとQRコードを登録</h3>
 
-        <div class="form-group">
-          <label>アクセ画像</label>
-          <input type="file" onchange="loadSingleImage(event, 'acc')">
-        </div>
-        <div class="form-group">
-          <label>トップス画像</label>
-          <input type="file" onchange="loadSingleImage(event, 'top')">
-        </div>
-        <div class="form-group">
-          <label>ボトムス画像</label>
-          <input type="file" onchange="loadSingleImage(event, 'bottom')">
-        </div>
-        <div class="form-group">
-          <label>シューズ画像</label>
-          <input type="file" onchange="loadSingleImage(event, 'shoes')">
-        </div>
+        <div class="form-group"><label>アクセ画像</label><input type="file" onchange="loadSingleImage(event, 'acc')"></div>
+        <div class="form-group"><label>トップス画像</label><input type="file" onchange="loadSingleImage(event, 'top')"></div>
+        <div class="form-group"><label>ボトムス画像</label><input type="file" onchange="loadSingleImage(event, 'bottom')"></div>
+        <div class="form-group"><label>シューズ画像</label><input type="file" onchange="loadSingleImage(event, 'shoes')"></div>
 
-        <hr style="border: none; border-top: 1px dashed #f8bbd0; margin: 4px 0;">
+        <hr style="border: none; border-top: 1px dashed #f8bbd0; margin: 2px 0;">
 
-        <div class="form-group">
-          <label>トップス QR</label>
-          <input type="file" onchange="loadSingleImage(event, 'qr-t')">
-        </div>
-        <div class="form-group">
-          <label>ボトムス QR</label>
-          <input type="file" onchange="loadSingleImage(event, 'qr-b')">
-        </div>
-        <div class="form-group">
-          <label>シューズ QR</label>
-          <input type="file" onchange="loadSingleImage(event, 'qr-s')">
-        </div>
+        <div class="form-group"><label>アクセ QR</label><input type="file" onchange="loadSingleImage(event, 'qr-acc')"></div>
+        <div class="form-group"><label>トップス QR</label><input type="file" onchange="loadSingleImage(event, 'qr-t')"></div>
+        <div class="form-group"><label>ボトムス QR</label><input type="file" onchange="loadSingleImage(event, 'qr-b')"></div>
+        <div class="form-group"><label>シューズ QR</label><input type="file" onchange="loadSingleImage(event, 'qr-s')"></div>
 
-        <button class="btn btn-outline" onclick="switchTab('coord')" style="margin-top: 8px;">コーデ画面で確認する →</button>
+        <button class="btn btn-outline" onclick="switchTab('coord')" style="margin-top: 6px;">コーデ画面で確認する →</button>
       </div>
     </section>
 
     <!-- 保存一覧タブ -->
     <section id="page-saved" class="tab-page">
       <h3 style="font-size: 14px; color: #9c27b0; margin-bottom: 8px;">保存したコーデ一覧</h3>
-      <div id="saved-list-container" class="saved-list">
-        <!-- ここに保存したコーデが追加されます -->
-      </div>
+      <div id="saved-list-container" class="saved-list"></div>
     </section>
   </main>
 
   <!-- ナビゲーションバー -->
   <nav class="nav-bar">
-    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
-      <span class="icon">🏠</span>
-      ホーム
-    </button>
-    <button class="nav-item" id="nav-coord" onclick="switchTab('coord')">
-      <span class="icon">👗</span>
-      コーデ
-    </button>
-    <button class="nav-item" id="nav-register" onclick="switchTab('register')">
-      <span class="icon">➕</span>
-      登録
-    </button>
-    <button class="nav-item" id="nav-saved" onclick="switchTab('saved')">
-      <span class="icon">☆</span>
-      一覧
-    </button>
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')"><span class="icon">🏠</span>ホーム</button>
+    <button class="nav-item" id="nav-coord" onclick="switchTab('coord')"><span class="icon">👗</span>コーデ</button>
+    <button class="nav-item" id="nav-register" onclick="switchTab('register')"><span class="icon">➕</span>登録</button>
+    <button class="nav-item" id="nav-saved" onclick="switchTab('saved')"><span class="icon">☆</span>一覧</button>
   </nav>
 </div>
 
 <script>
-  // 現在画面で選択されているデータの保持
   let currentCoord = {
-    acc: '',
-    top: '',
-    bottom: '',
-    shoes: '',
-    'qr-t': '',
-    'qr-b': '',
-    'qr-s': ''
+    acc: '', top: '', bottom: '', shoes: '',
+    'qr-acc': '', 'qr-t': '', 'qr-b': '', 'qr-s': ''
   };
 
-  // デフォルトテキスト
   const defaultLabels = {
-    acc: 'アクセ',
-    top: 'トップス',
-    bottom: 'ボトムス',
-    shoes: 'シューズ',
-    'qr-t': 'T-QR',
-    'qr-b': 'B-QR',
-    'qr-s': 'S-QR'
+    acc: 'アクセ', top: 'トップス', bottom: 'ボトムス', shoes: 'シューズ',
+    'qr-acc': 'A-QR', 'qr-t': 'T-QR', 'qr-b': 'B-QR', 'qr-s': 'S-QR'
   };
 
-  // タブ切り替え
   function switchTab(tabName) {
     document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -423,12 +410,9 @@
     const targetNav = document.getElementById('nav-' + tabName);
     if (targetNav) targetNav.classList.add('active');
 
-    if (tabName === 'saved') {
-      renderSavedList();
-    }
+    if (tabName === 'saved') renderSavedList();
   }
 
-  // 単一画像の読み込み
   function loadSingleImage(event, type) {
     const file = event.target.files[0];
     if (!file) return;
@@ -442,7 +426,6 @@
     reader.readAsDataURL(file);
   }
 
-  // スロットの表示を更新
   function updateSlotDisplay(type, base64) {
     const slotEl = document.getElementById('slot-' + type);
     if (slotEl) {
@@ -454,38 +437,27 @@
     }
   }
 
-  // 全スロットを一括更新
   function updateAllSlots() {
     Object.keys(currentCoord).forEach(key => {
       updateSlotDisplay(key, currentCoord[key]);
     });
   }
 
-  // コーデを名前をつけてLocalStorageに保存
   function saveCurrentCoord() {
     const nameInput = document.getElementById('coord-name-input');
     const name = nameInput.value.trim() || '無題のコーデ';
-
     let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
     
-    // 新しいコーデオブジェクト
-    const newCoordData = {
-      id: Date.now(),
-      name: name,
-      data: { ...currentCoord }
-    };
-
+    savedList.push({ id: Date.now(), name: name, data: { ...currentCoord } });
     try {
-      savedList.push(newCoordData);
       localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
       alert(`「${name}」を保存しました！`);
       nameInput.value = '';
     } catch (err) {
-      alert('保存容量を超えてしまいました。不要なコーデを削除するか、画像のサイズを小さくしてください。');
+      alert('容量がいっぱいです。');
     }
   }
 
-  // 保存一覧の描画
   function renderSavedList() {
     const container = document.getElementById('saved-list-container');
     const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
@@ -506,7 +478,6 @@
     `).join('');
   }
 
-  // 保存コーデの読み込み
   function loadSavedCoord(id) {
     const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
     const target = savedList.find(item => item.id === id);
@@ -518,14 +489,40 @@
     }
   }
 
-  // 保存コーデの削除
   function deleteSavedCoord(id) {
-    if (!confirm('このコーデを削除しますか？')) return;
-
+    if (!confirm('削除しますか？')) return;
     let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
     savedList = savedList.filter(item => item.id !== id);
     localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
     renderSavedList();
+  }
+
+  // 最大4つまでのコーデ比較表示切り替え
+  function toggleCompareView() {
+    const section = document.getElementById('compare-section');
+    const isVisible = section.style.display === 'block';
+    section.style.display = isVisible ? 'none' : 'block';
+
+    if (!isVisible) {
+      const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+      const grid = document.getElementById('compare-grid-slots');
+      
+      // 最大4つまで抽出
+      const targets = savedList.slice(0, 4);
+
+      if (targets.length === 0) {
+        grid.innerHTML = '<p style="grid-column: span 4; font-size:10px; text-align:center; color:#888;">保存されたコーデがありません</p>';
+        return;
+      }
+
+      grid.innerHTML = targets.map((item, index) => `
+        <div class="compare-column">
+          <span style="font-weight:bold; color:#4a148c; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${item.name}</span>
+          <div class="compare-slot">${item.data.top ? `<img src="${item.data.top}">` : 'トップ'}</div>
+          <div class="compare-slot">${item.data.bottom ? `<img src="${item.data.bottom}">` : 'ボトム'}</div>
+        </div>
+      `).join('');
+    }
   }
 </script>
 
