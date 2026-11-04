@@ -29,7 +29,6 @@
       justify-content: center;
     }
 
-    /* スマホ画面風コンテナ */
     .app-container {
       width: 100%;
       max-width: 430px;
@@ -39,12 +38,11 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      padding-bottom: 70px;
+      padding-bottom: 80px;
     }
 
-    /* ヘッダー */
     .header {
-      padding: 20px;
+      padding: 20px 10px 10px;
       text-align: center;
     }
     .header h1 {
@@ -58,9 +56,8 @@
       margin-top: 4px;
     }
 
-    /* メインコンテンツエリア */
     .content {
-      padding: 16px;
+      padding: 12px;
       flex: 1;
     }
 
@@ -71,7 +68,7 @@
       display: block;
     }
 
-    /* カード風グリッドメニュー */
+    /* ホーム画面 */
     .grid-menu {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -86,11 +83,6 @@
       text-align: center;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .menu-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--pink-main);
     }
     .menu-card .icon {
       font-size: 24px;
@@ -107,28 +99,28 @@
       background: var(--card-bg);
       border: 2px dashed var(--purple-main);
       border-radius: 20px;
-      padding: 16px;
+      padding: 12px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
     .coord-slots {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .slot {
       background: #fff;
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      height: 90px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #aaa;
       font-size: 12px;
-      position: relative;
       overflow: hidden;
+      position: relative;
     }
     .slot img {
       width: 100%;
@@ -137,37 +129,103 @@
     }
 
     .qr-side {
-      width: 100px;
+      width: 85px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .qr-box {
       background: #fff;
       border: 1px solid #f8bbd0;
       border-radius: 10px;
-      height: 90px;
+      height: 80px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-size: 10px;
+      color: #aaa;
+      overflow: hidden;
+    }
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
-    /* 登録画面のスタイル */
-    .register-box {
+    /* ボタン類 */
+    .btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-outline {
+      border: 1px solid #ab47bc;
+      background: #fff;
+      color: #ab47bc;
+    }
+    .btn-fill {
+      background: #ab47bc;
+      color: #fff;
+    }
+    .btn-save {
+      background: #e91e63;
+      color: #fff;
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* 登録フォーム */
+    .register-form {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 16px;
       border: 2px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .register-box input[type="file"] {
-      margin-top: 8px;
-      margin-bottom: 12px;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
       font-size: 12px;
+      font-weight: bold;
+      color: #6a1b9a;
+    }
+    .form-group input[type="file"] {
+      font-size: 11px;
     }
 
-    /* 下部ナビゲーションバー */
+    /* 保存済みコーデリスト */
+    .saved-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .saved-item {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .saved-item span {
+      font-size: 13px;
+      font-weight: bold;
+      color: #4a148c;
+    }
+
+    /* ナビゲーションバー */
     .nav-bar {
       position: fixed;
       bottom: 0;
@@ -203,13 +261,11 @@
 <body>
 
 <div class="app-container">
-  <!-- ヘッダー -->
   <header class="header">
     <h1>ときめきを、コーデしよう！</h1>
     <p>あつめて ♡ ならべて ♡ お気に入り</p>
   </header>
 
-  <!-- メイン表示域 -->
   <main class="content">
     <!-- ホームタブ -->
     <section id="page-home" class="tab-page active">
@@ -220,51 +276,94 @@
         </div>
         <div class="menu-card" onclick="switchTab('register')">
           <div class="icon">➕</div>
-          <div class="title">コーデを登録</div>
+          <div class="title">パーツ／QRを登録</div>
+        </div>
+        <div class="menu-card" onclick="switchTab('saved')">
+          <div class="icon">☆</div>
+          <div class="title">保存したコーデ</div>
         </div>
         <div class="menu-card" onclick="alert('準備中だよ♡')">
           <div class="icon">♡</div>
           <div class="title">ほしいコーデ</div>
-        </div>
-        <div class="menu-card" onclick="alert('準備中だよ♡')">
-          <div class="icon">☆</div>
-          <div class="title">ベストコーデ一覧</div>
         </div>
       </div>
     </section>
 
     <!-- コーデ編集/閲覧タブ -->
     <section id="page-coord" class="tab-page">
-      <div style="margin-bottom: 12px; display: flex; gap: 8px;">
-        <button style="padding: 6px 12px; border-radius: 20px; border: 1px solid #ab47bc; background:#fff; color:#ab47bc; font-size:11px;">2コーデ比較</button>
-        <button style="padding: 6px 12px; border-radius: 20px; border: none; background: #ab47bc; color:#fff; font-size:11px;">☆ ベストに登録</button>
+      <div style="margin-bottom: 10px; display: flex; gap: 8px;">
+        <button class="btn btn-outline">2コーデ比較</button>
+        <button class="btn btn-fill">☆ ベストに登録</button>
       </div>
 
+      <!-- コーデプレビュー -->
       <div class="coord-editor">
-        <!-- コーデ部位スロット（保存された画像が表示されます） -->
         <div class="coord-slots">
           <div class="slot" id="slot-acc">アクセ</div>
           <div class="slot" id="slot-top">トップス</div>
           <div class="slot" id="slot-bottom">ボトムス</div>
           <div class="slot" id="slot-shoes">シューズ</div>
         </div>
-
-        <!-- QRコードエリア -->
         <div class="qr-side">
-          <div class="qr-box">T-QR</div>
-          <div class="qr-box">B-QR</div>
-          <div class="qr-box">S-QR</div>
+          <div class="qr-box" id="slot-qr-t">T-QR</div>
+          <div class="qr-box" id="slot-qr-b">B-QR</div>
+          <div class="qr-box" id="slot-qr-s">S-QR</div>
         </div>
+      </div>
+
+      <!-- コーデ保存用フォーム -->
+      <div style="margin-top: 12px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 12px;">
+        <input type="text" id="coord-name-input" placeholder="コーデ名を入力（例：ゴスロリスタイル）" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 12px;">
+        <button class="btn btn-save" onclick="saveCurrentCoord()">★ このコーデを名前をつけて保存</button>
       </div>
     </section>
 
-    <!-- 登録用タブ -->
+    <!-- 画像・QR登録タブ -->
     <section id="page-register" class="tab-page">
-      <div class="register-box">
-        <h3 style="font-size: 14px; color: #9c27b0; margin-bottom: 8px;">トップス画像を登録・保存</h3>
-        <input type="file" id="imageInput" accept="image/*">
-        <div style="font-size: 11px; color: #666;">※選択した画像は自動でスマホ/ブラウザに保存され、ページを閉じても消えません。</div>
-        <button onclick="deleteImage()" style="margin-top: 10px; background: #ff5252; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor:pointer;">保存された画像を削除</button>
+      <div class="register-form">
+        <h3 style="font-size: 14px; color: #9c27b0;">現在のコーデに画像を追加</h3>
+
+        <div class="form-group">
+          <label>アクセ画像</label>
+          <input type="file" onchange="loadSingleImage(event, 'acc')">
+        </div>
+        <div class="form-group">
+          <label>トップス画像</label>
+          <input type="file" onchange="loadSingleImage(event, 'top')">
+        </div>
+        <div class="form-group">
+          <label>ボトムス画像</label>
+          <input type="file" onchange="loadSingleImage(event, 'bottom')">
+        </div>
+        <div class="form-group">
+          <label>シューズ画像</label>
+          <input type="file" onchange="loadSingleImage(event, 'shoes')">
+        </div>
+
+        <hr style="border: none; border-top: 1px dashed #f8bbd0; margin: 4px 0;">
+
+        <div class="form-group">
+          <label>トップス QR</label>
+          <input type="file" onchange="loadSingleImage(event, 'qr-t')">
+        </div>
+        <div class="form-group">
+          <label>ボトムス QR</label>
+          <input type="file" onchange="loadSingleImage(event, 'qr-b')">
+        </div>
+        <div class="form-group">
+          <label>シューズ QR</label>
+          <input type="file" onchange="loadSingleImage(event, 'qr-s')">
+        </div>
+
+        <button class="btn btn-outline" onclick="switchTab('coord')" style="margin-top: 8px;">コーデ画面で確認する →</button>
+      </div>
+    </section>
+
+    <!-- 保存一覧タブ -->
+    <section id="page-saved" class="tab-page">
+      <h3 style="font-size: 14px; color: #9c27b0; margin-bottom: 8px;">保存したコーデ一覧</h3>
+      <div id="saved-list-container" class="saved-list">
+        <!-- ここに保存したコーデが追加されます -->
       </div>
     </section>
   </main>
@@ -283,65 +382,150 @@
       <span class="icon">➕</span>
       登録
     </button>
+    <button class="nav-item" id="nav-saved" onclick="switchTab('saved')">
+      <span class="icon">☆</span>
+      一覧
+    </button>
   </nav>
 </div>
 
 <script>
-  // タブ切り替え関数
+  // 現在画面で選択されているデータの保持
+  let currentCoord = {
+    acc: '',
+    top: '',
+    bottom: '',
+    shoes: '',
+    'qr-t': '',
+    'qr-b': '',
+    'qr-s': ''
+  };
+
+  // デフォルトテキスト
+  const defaultLabels = {
+    acc: 'アクセ',
+    top: 'トップス',
+    bottom: 'ボトムス',
+    shoes: 'シューズ',
+    'qr-t': 'T-QR',
+    'qr-b': 'B-QR',
+    'qr-s': 'S-QR'
+  };
+
+  // タブ切り替え
   function switchTab(tabName) {
     document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-    const targetPage = document.getElementById('page--' + tabName) || document.getElementById('page-' + tabName);
+    const targetPage = document.getElementById('page-' + tabName);
     if (targetPage) targetPage.classList.add('active');
 
     const targetNav = document.getElementById('nav-' + tabName);
     if (targetNav) targetNav.classList.add('active');
+
+    if (tabName === 'saved') {
+      renderSavedList();
+    }
   }
 
-  // 画像の保存・読み込み処理
-  const imageInput = document.getElementById('imageInput');
-  const slotTop = document.getElementById('slot-top');
-
-  // ページ読み込み時に保存されていた画像を復元
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedImage = localStorage.getItem('saved_top_image');
-    if (savedImage) {
-      displayTopImage(savedImage);
-    }
-  });
-
-  // ファイルが選択されたとき
-  imageInput.addEventListener('change', (event) => {
+  // 単一画像の読み込み
+  function loadSingleImage(event, type) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const base64Data = e.target.result;
-      displayTopImage(base64Data);
-
-      try {
-        localStorage.setItem('saved_top_image', base64Data);
-        alert('トップス画像を保存しました！「コーデ」タブから確認できます。');
-      } catch (err) {
-        alert('画像の容量が大きすぎるため保存できませんでした。');
-      }
+      const base64 = e.target.result;
+      currentCoord[type] = base64;
+      updateSlotDisplay(type, base64);
     };
     reader.readAsDataURL(file);
-  });
-
-  // トップススロットに画像を表示する関数
-  function displayTopImage(src) {
-    slotTop.innerHTML = `<img src="${src}" alt="トップス">`;
   }
 
-  // 保存した画像を削除する関数
-  function deleteImage() {
-    localStorage.removeItem('saved_top_image');
-    slotTop.innerHTML = 'トップス';
-    imageInput.value = '';
-    alert('画像を削除しました。');
+  // スロットの表示を更新
+  function updateSlotDisplay(type, base64) {
+    const slotEl = document.getElementById('slot-' + type);
+    if (slotEl) {
+      if (base64) {
+        slotEl.innerHTML = `<img src="${base64}">`;
+      } else {
+        slotEl.innerHTML = defaultLabels[type];
+      }
+    }
+  }
+
+  // 全スロットを一括更新
+  function updateAllSlots() {
+    Object.keys(currentCoord).forEach(key => {
+      updateSlotDisplay(key, currentCoord[key]);
+    });
+  }
+
+  // コーデを名前をつけてLocalStorageに保存
+  function saveCurrentCoord() {
+    const nameInput = document.getElementById('coord-name-input');
+    const name = nameInput.value.trim() || '無題のコーデ';
+
+    let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+    
+    // 新しいコーデオブジェクト
+    const newCoordData = {
+      id: Date.now(),
+      name: name,
+      data: { ...currentCoord }
+    };
+
+    try {
+      savedList.push(newCoordData);
+      localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
+      alert(`「${name}」を保存しました！`);
+      nameInput.value = '';
+    } catch (err) {
+      alert('保存容量を超えてしまいました。不要なコーデを削除するか、画像のサイズを小さくしてください。');
+    }
+  }
+
+  // 保存一覧の描画
+  function renderSavedList() {
+    const container = document.getElementById('saved-list-container');
+    const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+
+    if (savedList.length === 0) {
+      container.innerHTML = '<p style="font-size:12px; color:#888;">保存されたコーデはありません。</p>';
+      return;
+    }
+
+    container.innerHTML = savedList.map(item => `
+      <div class="saved-item">
+        <span>${item.name}</span>
+        <div>
+          <button class="btn btn-outline" onclick="loadSavedCoord(${item.id})">呼び出す</button>
+          <button class="btn btn-fill" style="background:#ff5252;" onclick="deleteSavedCoord(${item.id})">削除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 保存コーデの読み込み
+  function loadSavedCoord(id) {
+    const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+    const target = savedList.find(item => item.id === id);
+    if (target) {
+      currentCoord = { ...target.data };
+      updateAllSlots();
+      switchTab('coord');
+      alert(`「${target.name}」を表示しました！`);
+    }
+  }
+
+  // 保存コーデの削除
+  function deleteSavedCoord(id) {
+    if (!confirm('このコーデを削除しますか？')) return;
+
+    let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+    savedList = savedList.filter(item => item.id !== id);
+    localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
+    renderSavedList();
   }
 </script>
 
