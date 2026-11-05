@@ -53,7 +53,7 @@
       display: block;
     }
 
-    /* ホーム画面（3つのメニュー） */
+    /* ホーム画面 */
     .grid-menu-3 {
       display: flex;
       flex-direction: column;
@@ -389,6 +389,31 @@
 </div>
 
 <script>
+  // IndexedDBの準備
+  const DB_NAME = 'RibbonClosetDB';
+  const STORE_NAME = 'coords';
+  let db;
+
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = (e) => {
+        db = e.target.result;
+        resolve(db);
+      };
+      request.onerror = (e) => reject(e);
+    });
+  }
+
+  // 初期化実行
+  initDB();
+
   let currentCoord = {
     acc: '', top: '', bottom: '', shoes: '',
     'qr-acc': '', 'qr-t': '', 'qr-b': '', 'qr-s': ''
@@ -412,7 +437,6 @@
     if (tabName === 'saved') renderSavedList();
   }
 
-  // 画像圧縮して読み込む処理（最大幅/高さ300pxまで軽量化）
   function loadAndCompressImage(event, type) {
     const file = event.target.files[0];
     if (!file) return;
@@ -422,7 +446,7 @@
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxSide = 300; // 画面表示に十分な画質サイズ
+        const maxSide = 400; // 少し綺麗に見えるようサイズ調整
         let width = img.width;
         let height = img.height;
 
@@ -443,8 +467,7 @@
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // 軽量化したBase64画像データを取得
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
         currentCoord[type] = compressedBase64;
         updateSlotDisplay(type, compressedBase64);
       };
@@ -470,24 +493,46 @@
     });
   }
 
-  function saveCurrentCoord() {
+  // IndexedDBへの保存
+  async function saveCurrentCoord() {
     const nameInput = document.getElementById('coord-name-input');
     const name = nameInput.value.trim() || '無題のコーデ';
-    let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
     
-    savedList.push({ id: Date.now(), name: name, data: { ...currentCoord } });
-    try {
-      localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
-      alert(`「${name}」を保存しました！`);
+    if (!db) await initDB();
+
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+
+    const newCoord = {
+      id: Date.now(),
+      name: name,
+      data: { ...currentCoord }
+    };
+
+    const request = store.add(newCoord);
+    request.onsuccess = () => {
+      alert(`「${name}」を大容量データベースに保存しました！`);
       nameInput.value = '';
-    } catch (err) {
-      alert('まだ容量がいっぱいです。一覧タブから不要な古いコーデをいくつか削除してから試してください！');
-    }
+    };
+    request.onerror = () => {
+      alert('保存に失敗しました。');
+    };
   }
 
-  function renderSavedList() {
+  // IndexedDBからの読み込み
+  async function getAllSavedCoords() {
+    if (!db) await initDB();
+    return new Promise((resolve) => {
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+    });
+  }
+
+  async function renderSavedList() {
     const container = document.getElementById('saved-list-container');
-    const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+    const savedList = await getAllSavedCoords();
 
     if (savedList.length === 0) {
       container.innerHTML = '<p style="font-size:12px; color:#888;">保存されたコーデはありません。</p>';
@@ -505,8 +550,8 @@
     `).join('');
   }
 
-  function loadSavedCoord(id) {
-    const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+  async function loadSavedCoord(id) {
+    const savedList = await getAllSavedCoords();
     const target = savedList.find(item => item.id === id);
     if (target) {
       currentCoord = { ...target.data };
@@ -516,23 +561,28 @@
     }
   }
 
-  function deleteSavedCoord(id) {
+  async function deleteSavedCoord(id) {
     if (!confirm('削除しますか？')) return;
-    let savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
-    savedList = savedList.filter(item => item.id !== id);
-    localStorage.setItem('saved_coords_list', JSON.stringify(savedList));
-    renderSavedList();
+    if (!db) await initDB();
+
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.delete(id);
+
+    request.onsuccess = () => {
+      renderSavedList();
+    };
   }
 
-  function toggleCompareView() {
+  async function toggleCompareView() {
     const section = document.getElementById('compare-section');
     const isVisible = section.style.display === 'block';
     section.style.display = isVisible ? 'none' : 'block';
 
     if (!isVisible) {
-      const savedList = JSON.parse(localStorage.getItem('saved_coords_list') || '[]');
+      const savedList = await getAllSavedCoords();
       const grid = document.getElementById('compare-grid-slots');
-      const targets = savedList.slice(0, 4);
+      const targets = savedList.slice(-4).reverse(); // 最新の4つを表示
 
       if (targets.length === 0) {
         grid.innerHTML = '<p style="grid-column: span 4; font-size:10px; text-align:center; color:#888;">保存されたコーデがありません</p>';
