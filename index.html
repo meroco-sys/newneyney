@@ -216,7 +216,7 @@
       color: #4a148c;
     }
 
-    /* 4コーデ比較エリア（QRなし全身縦並び×4列） */
+    /* 4コーデ比較エリア */
     .compare-container {
       display: none;
       margin-top: 10px;
@@ -297,7 +297,7 @@
 
 <div class="app-container">
   <main class="content">
-    <!-- ホームタブ（3つのメニュー） -->
+    <!-- ホームタブ -->
     <section id="page-home" class="tab-page active">
       <div class="grid-menu-3">
         <div class="menu-card-large" onclick="switchTab('coord')">
@@ -322,7 +322,7 @@
         <button class="btn btn-fill">☆ ベストに登録</button>
       </div>
 
-      <!-- 最大4コーデ比較エリア（QRなし全身4パーツ縦並び） -->
+      <!-- 4コーデ比較エリア -->
       <div id="compare-section" class="compare-container">
         <h4 style="font-size: 11px; color: #9c27b0; margin-bottom: 6px; text-align: center;">4コーデ比較（全身）</h4>
         <div class="compare-grid" id="compare-grid-slots"></div>
@@ -344,7 +344,7 @@
         </div>
       </div>
 
-      <!-- コーデ保存用フォーム -->
+      <!-- コーデ保存フォーム -->
       <div style="margin-top: 12px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 12px;">
         <input type="text" id="coord-name-input" placeholder="コーデ名を入力" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 12px;">
         <button class="btn btn-save" onclick="saveCurrentCoord()">★ このコーデを名前をつけて保存</button>
@@ -356,17 +356,17 @@
       <div class="register-form">
         <h3 style="font-size: 13px; color: #9c27b0;">パーツとQRコードを登録</h3>
 
-        <div class="form-group"><label>アクセ画像</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'acc')"></div>
-        <div class="form-group"><label>トップス画像</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'top')"></div>
-        <div class="form-group"><label>ボトムス画像</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'bottom')"></div>
-        <div class="form-group"><label>シューズ画像</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'shoes')"></div>
+        <div class="form-group"><label>アクセ画像</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'acc')"></div>
+        <div class="form-group"><label>トップス画像</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'top')"></div>
+        <div class="form-group"><label>ボトムス画像</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'bottom')"></div>
+        <div class="form-group"><label>シューズ画像</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'shoes')"></div>
 
         <hr style="border: none; border-top: 1px dashed #f8bbd0; margin: 2px 0;">
 
-        <div class="form-group"><label>アクセ QR</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'qr-acc')"></div>
-        <div class="form-group"><label>トップス QR</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'qr-t')"></div>
-        <div class="form-group"><label>ボトムス QR</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'qr-b')"></div>
-        <div class="form-group"><label>シューズ QR</label><input type="file" accept="image/*" onchange="loadSingleImage(event, 'qr-s')"></div>
+        <div class="form-group"><label>アクセ QR</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'qr-acc')"></div>
+        <div class="form-group"><label>トップス QR</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'qr-t')"></div>
+        <div class="form-group"><label>ボトムス QR</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'qr-b')"></div>
+        <div class="form-group"><label>シューズ QR</label><input type="file" accept="image/*" onchange="loadAndCompressImage(event, 'qr-s')"></div>
 
         <button class="btn btn-outline" onclick="switchTab('coord')" style="margin-top: 6px;">コーデ画面で確認する →</button>
       </div>
@@ -412,15 +412,43 @@
     if (tabName === 'saved') renderSavedList();
   }
 
-  function loadSingleImage(event, type) {
+  // 画像圧縮して読み込む処理（最大幅/高さ300pxまで軽量化）
+  function loadAndCompressImage(event, type) {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const base64 = e.target.result;
-      currentCoord[type] = base64;
-      updateSlotDisplay(type, base64);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSide = 300; // 画面表示に十分な画質サイズ
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxSide) {
+            height = Math.round((height * maxSide) / width);
+            width = maxSide;
+          }
+        } else {
+          if (height > maxSide) {
+            width = Math.round((width * maxSide) / height);
+            height = maxSide;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 軽量化したBase64画像データを取得
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        currentCoord[type] = compressedBase64;
+        updateSlotDisplay(type, compressedBase64);
+      };
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -453,7 +481,7 @@
       alert(`「${name}」を保存しました！`);
       nameInput.value = '';
     } catch (err) {
-      alert('容量がいっぱいです。');
+      alert('まだ容量がいっぱいです。一覧タブから不要な古いコーデをいくつか削除してから試してください！');
     }
   }
 
@@ -496,7 +524,6 @@
     renderSavedList();
   }
 
-  // 4コーデ比較表示（QRなし、アクセ〜シューズの全身縦並び×4列）
   function toggleCompareView() {
     const section = document.getElementById('compare-section');
     const isVisible = section.style.display === 'block';
